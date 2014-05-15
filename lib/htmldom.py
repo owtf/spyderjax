@@ -5,6 +5,9 @@
 HTMLDOM Library provides a simple interface for accessing and manipulating HTML documents.
 You may find this library useful for building applications like screen-scraping.
 Inspired by Jquery Library.
+
+http://thehtmldom.sourceforge.net/
+
 """
 import re
 import math

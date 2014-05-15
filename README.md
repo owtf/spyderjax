@@ -1,4 +1,4 @@
-AJAX Spider 
+AJAX Spider
 ===
 
 This is a ***prototype crawler*** which crawls **AJAX** targets and saves its snapshot.
