@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+    <title>SpiderAjax UI Alpha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+	
+	<!-- JS -->
+    <script type="text/javascript" src="js/libs/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="js/libs/bootstrap.min.js"></script>
+    <!-- End JS -->
+	 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+	<!-- Navigation Bar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"><i class="fa fa-gear"></i>SPIDERAJAX</a>
+        </div>
+    </nav>
+    <!-- End Navigation Bar -->
+
+    <!-- Start container -->
+    <div class="container">
+	<div class="jumbotron">
+    <h1>SpiderAjax webUI Alpha</h1>
+	</div>
+    <p>Normally, crawlers, even as sophisticated as <em>Google search bots</em>, <strong>cannot</strong> crawl and index a dynamic website [lots of AJAX calls, javascript]. This is not feasible, even advised against for <strong>security</strong> reasons [they don&#39;t want to load possible <strong><em>malicious javascript</em></strong> on their servers :P].</p>
+
+	<p>In order to make <strong><em>AJAX testing</em></strong> (crawling) more generalized and accurate, a team of researchers published a <a href="http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2011-033.pdf">paper</a> and published an open-source tool, <a href="https://github.com/crawljax/crawljax">Crawljax</a> based on it.</p>
+
+	<p>I will give you a brief understanding of how this tool works:</p>
+
+	<ul>
+	    <li>
+	        <p>div and span elements in <strong><em>AJAX</em></strong> applications might have clickables attached to them.</p>
+	    </li>
+	    <li>
+	        <p>The URL of the website along with prospective click elements (a set of HTML tags) is input.</p>
+	    </li>
+	    <li>
+	        <p><em>Robot</em> is used to simulate real user clicks on the embedded browser to fire possible events and actions attached to candidate clickables.</p>
+	    </li>
+	    <li>
+	        <p>A <strong><em>state flow graph</em></strong> is then built.</p>
+	    </li>
+	    <li>
+	        <p>The new <strong><em>state flow graph</em></strong> becomes the input for the crawl procedure which is recursively called.</p>
+	    </li>
+	    <li>
+	        <p>The distance between the current <em>DOM</em> and previous <em>DOM</em> is compared.</p>
+	    </li>
+	    <li>
+	        <p>The <strong><em>state flow graph</em></strong> is updated accordingly.</p>
+	    </li>
+	    <li>
+	        <p>The links in the nodes of the graphs are established by replacing the clickable with a hypertext link.</p>
+	    </li>
+	    <li>
+	        <p>HTML String representation of all <em>DOM</em> objects are generated.</p>
+	    </li>
+	    <li>
+	        <p>The original Ajax site is then used as a mirror site to check for vulnerabilities,</p>
+	    </li>
+	</ul>
+
+	<hr>
+
+	<p>A <strong>state-flow graph</strong> for an <strong><em>AJAX</em></strong> site A is a 3 tuple &lt; r, V , E &gt; where:</p>
+
+	<ol>
+	    <li>
+	        <p><strong><em>r</em></strong> is the root node (called <em>Index</em>) representing the initial state after A has been fully loaded into the browser.</p>
+	    </li>
+	    <li>
+	        <p><strong><em>V</em></strong> is a set of vertices representing the states. Each <code>v ∈ V</code> represents a run-time state in A.
+	        </p>
+	    </li>
+	    <li>
+	        <p><strong><em>E</em></strong> is a set of edges between vertices. Each <code>( v 1 , v 2 ) ∈ E</code> represents a clickable <strong><em>c</em></strong> connecting two states if and only if state <strong><em>v 2</em></strong> is reached by executing <strong><em>c</em></strong> in state <strong><em>v 1</em></strong> .</p>
+	    </li>
+	</ol>
+
+	<p>
+	    <br></br>
+	    <img src="img/graph.png" height="175" width="578">
+	    <br></br>
+	    It illustrates how from the start page three different states can be reached. The edges between states are labeled with an identification (either via its ID-attribute or via an <em>XPath</em> expression) of the element to be clicked in order to reach the given state.</p>
+
+	<p>
+	    <br></br>
+	    <img src="img/working.png" width="600" height="400">
+	    <br></br>
+	</p>
+
+	<h3>A working model for <strong>Crawljax</strong> can be shown as,</h3>
+
+	<p>
+	    <br></br>
+	    <img src="img/run.png" width="600" height="500">
+	    <br></br>
+	</p>
+	</div>
+    <!-- End container -->
+</body>
+</html>
