@@ -52,7 +52,8 @@ This manages the ***clickbot*** and the ***state-flow graph engine***.
 It initializes, pauses, and stops the bot. This also creates the ***state flow graph*** based on **DOM state** changes (from the *DOM analyzer*).
 
 
-4. <b>State-flow graph</b>
+4. State-flow graph
+---
 
 This interprets visually, how the state changes with trigger/firing of an *event*.
 
@@ -66,7 +67,7 @@ The ***state-flow graph*** will be accessed through the **webUI**.
 5. Mirror site and sitemap generator
 ---
 
-The ***state flow graph*** can then be passed on to the *mirror site generator* which generates a local **static HMTL mirror** of the **AJAX** target.
+The ***state flow graph*** can then be passed on to the *mirror site generator* which generates a local **static HMTL mirror** of the **AJAX** target for vulnerability testing by core **OWTF**.
 
 The *sitemap* is also generated here.
 
