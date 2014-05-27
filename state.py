@@ -27,24 +27,3 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-
-import utils
-import robot
-import controller
-import state
-
-import lxml.html
-
-
-class Spider(object):
-	"""
-	* This is the main crawling engine.
-	* It will use the robot (browser) module to do the crawling
-	  and will pass on the DOM tree for analysis.
-	  - utils will take care of that
-	* The state module will provide the necessary functions for
-	  creating state-flow graph.
-	* At last, the site mirroring and sitemap function will take over.
-	"""
-
-	def __init__(self, crawlDepth, maxDepth, base_url)
