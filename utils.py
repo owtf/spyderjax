@@ -27,33 +27,86 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-
-import os
-import re
 import lxml.html
+import lxml.etree
+import hashlib
+
+from lxml.html.clean import Cleaner
 
 
 class ProcessDOM(object):
-
-    def __init__(self, html, url):
     """
     * Get HTML page from the robot, then analyze for clickable elements, 
     * and fire/trigger specific events on them.
     """
+    def __init__(self, html, url, browser, tree):
         self.html = html
         self.url = url
+        self.tree = self.parse()
 
+    def getStrippedDOM(self):
+        """
+        Clean HTML using lxml.html.clean.Cleaner
+        """
+        cleaner = Cleaner(comments=True, javascript=True,
+        scripts=True, safe_attrs_only=True, page_structure=True,
+        style=True)
+
+        return cleaner.clean_html(self.html)
 
     def parse(self):
         """
         * This will convert the html source into a dom object
         * Note that browser interaction is always done on the original DOM, not the modified dom.
         """
+        parser = lxml.etree.HTMLParser()
         # Convert html source to dom object
-        dom = lxml.html.tostring(self.html)
-        dom.make_links_absolute(self.url)
-        return dom     # This returns a DOM tree
+        # Error catching because of badly formatted HTML, although lxml tends to perform very well :)
+        try:
+            tree = lxml.etree.fromstring(self.html.getStrippedDOM(), parser).getroottree() # Returns a XML tree
+            page = tree.getroot()
+            return tree
+        except:
+            print "Error in parsing HTML.."
+            # What to do here?
+        # This will almost certainly not work here
+        # make_links_absolute(url)
 
+    def getElementById(self, element, Id):
+        """return the first element with this id attribute.
+        Return None if not available
+        >>> from lxml.etree import tostring,fromstring,Element,SubElement
+        >>> s = '<div><p id="myId">Some text</p></div>'
+        >>> elt = fromstring(s)
+        >>> e = getElementById(elt,'myId')
+        >>> tostring(e)
+        '<p id="myId">Some text</p>'
+        >>> e = getElementById(elt,'anotherId')
+        >>> e is None
+        True
+        """
+        try:
+            return element.xpath("//*[@id='%s']" % (Id,))[0]
+        except IndexError:
+            return None
+
+    def xpath(self, expression):
+        return self.tree.xpath(expression)
+  
+    def css_select(self, expression, text = False):
+        from lxml.cssselect import CSSSelector
+        sel = CSSSelector(expression)
+        selected_elements = sel(self.tree)
+        if text:
+            selected_elements = map(lambda x: x.text, selected_elements)
+        return selected_elements
+
+    def hashcode(self):
+        """
+        * Calculates a hash based on html string
+        """
+        string = lxml.html.fromstring(self.html).tostring()
+        return hashlib.md5(string).hexdigest
 
     def levenshtein(string1, string2):
         """ 
@@ -62,6 +115,7 @@ class ProcessDOM(object):
           required to transform string a into string b.
 
         * This will be used to compare DOM states
+        * The edit distance algorithm.
 
         """
         # http://hetland.org/coding/python/levenshtein.py
@@ -79,4 +133,28 @@ class ProcessDOM(object):
                 current[j] = min(insert, delete, replace)
         return current[n]
 
-    def 
+
+#*************************************************************************************************
+#thanks to Mark Pilgrim for these lists 
+#http://feedparser.org/docs/html-sanitization.html
+
+allowed_tags = set(('a', 'abbr', 'acronym', 'address', 'area', 'b', 'big',
+'blockquote', 'br', 'button', 'caption', 'center', 'cite', 'code', 'col',
+'colgroup', 'dd', 'del', 'dfn', 'dir', 'div', 'dl', 'dt', 'em', 'fieldset',
+'font', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img',
+'input', 'ins', 'kbd', 'label', 'legend', 'li', 'map', 'menu', 'ol',
+'optgroup', 'option', 'p', 'pre', 'q', 's', 'samp', 'select', 'small',
+'span', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td',
+'textarea', 'tfoot', 'th', 'thead', 'tr', 'tt', 'u', 'ul', 'var'))
+  
+allowed_attributes = set(('abbr', 'accept', 'accept-charset', 'accesskey',
+'action','align', 'alt', 'axis', 'border', 'cellpadding', 'cellspacing',
+'char','charoff', 'charset', 'checked', 'cite', 'class', 'clear', 'cols',
+'colspan', 'color', 'compact', 'coords', 'datetime', 'dir', 'disabled',
+'enctype', 'for', 'frame', 'headers', 'height', 'href', 'hreflang',
+'hspace', 'id', 'ismap', 'label', 'lang', 'longdesc', 'maxlength',
+'media', 'method', 'multiple', 'name', 'nohref', 'noshade', 'nowrap',
+'prompt', 'readonly', 'rel', 'rev', 'rows', 'rowspan', 'rules',
+'scope', 'selected', 'shape', 'size', 'span', 'src', 'start',
+'summary', 'tabindex', 'target', 'title', 'type', 'usemap', 'valign',
+'value', 'vspace', 'width'))

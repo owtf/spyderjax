@@ -1,7 +1,34 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+'''
+owtf is an OWASP+PTES-focused try to unite great tools and facilitate pen testing
+Copyright (c) 2011, Abraham Aranguren <name.surname@gmail.com> Twitter: @7a_ http://7-a.org
+All rights reserved.
 
-## Note:  this requires the python bindings for selenium and pyphantomjs if you want to use it
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the copyright owner nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+* Note:  this requires the python bindings for selenium and pyphantomjs if you want to use it
+'''
 
 import sys
 import time
@@ -84,7 +111,7 @@ class Browser(object):
             print "goToUrl got interrupted while waiting for the page to be loaded ", e
             pass        
     
-    def handlePopUps():
+    def handlePopUps(self):
         try:
             # Execute JS
             browser.execute_script("window.alert = function(msg){return true;};" \
@@ -95,7 +122,7 @@ class Browser(object):
             print "Unexpected Alert element: ", e
             pass
 
-    def fireEventWait():
+    def fireEventWait(self):
         """
         * Fires the event and waits for a specified time. 
         * webElement: is the element to fire event on.
@@ -115,12 +142,12 @@ class Browser(object):
         * Only some webdrivers support it
         """
         try:
-            print "Taking screenshot: %s" % filename
+            print "Taking screenshot..."
             browser.save_screenshot(filename)
         except Exception, e:
             print "Error: ", e
 
-    def goback():
+    def goback(self):
         """
         * Gives the back navigation
         * Not very accurate, could possibly result in error
@@ -130,11 +157,16 @@ class Browser(object):
         except:
             pass
 
-    def close():
+    def close(self):
         # * Closes the browser instance
         print "Closing the browser instance..."
         browser.quit()
 
+    def screenshotdir(self):
+        # http://stackoverflow.com/questions/273192/check-if-a-directory-exists-and-create-it-if-necessary --> Most elegant way
+        directory = 'screenshots'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
 #******************************************************************************************
 class Eventable(object):

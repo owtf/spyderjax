@@ -27,3 +27,39 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
+
+import lxml.html
+import math
+import uuid
+import utils
+
+import robot
+
+
+class State(object):
+    """
+    * The state class which represents a state in the browser. When iterating over the possible
+      candidate elements every time a candidate is returned its removed from the list so it is a one
+      time only access to the candidates.
+    * Analogous to StateVertex class in Crawljax
+
+    * url: the current url of the state
+    * name: the name of the state
+    * dom: the current DOM tree of the browser
+
+    """
+    def __init__(self, id, url, dom, name):
+        """
+        Self explanatory
+        """
+        self.id = hashlib.md5(str(uuid.uuid4())).hexdigest()
+        self.url = url
+        self.dom = dom
+        self.name = name
+
+
+class StateFlowGraph(object):
+    """
+    * The State-Flow Graph is a multi-edge directed graph with states on the vertices and
+      clickables (Eventable) on the edges.
+    """
