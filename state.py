@@ -28,12 +28,14 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
-import lxml.html
+from lxml import html
 import math
 import uuid
-import utils
+from copy import deepcopy
 
-import robot
+from robot import *
+from utils import *
+from graph import *
 
 
 class State(object):
@@ -43,23 +45,25 @@ class State(object):
       time only access to the candidates.
     * Analogous to StateVertex class in Crawljax
 
-    * url: the current url of the state
-    * name: the name of the state
-    * dom: the current DOM tree of the browser
-
+       + url: the current url of the state
+       + name: the name of the state
+       + dom: the current DOM tree of the browser
     """
-    def __init__(self, id, url, dom, name):
+    def __init__(self, browser, name, url, id, candidateElements, failedEvents):
         """
-        Self explanatory
+        * Describes a state object
         """
-        self.id = hashlib.md5(str(uuid.uuid4())).hexdigest()
-        self.url = url
-        self.dom = dom
+        self.browser = Browser()
         self.name = name
+        self.url = Browser().current_url
+        self.id = hashlib.md5(str(uuid.uuid4())).hexdigest()
+        self.candidateElements = []
+        self.failedEvents = failedEvents
 
 
-class StateFlowGraph(object):
-    """
-    * The State-Flow Graph is a multi-edge directed graph with states on the vertices and
-      clickables (Eventable) on the edges.
-    """
+class StateMachine(object):
+
+    def __init__(self, graph, initialState):
+        self.graph = graph
+        self.initial = initialState
+

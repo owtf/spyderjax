@@ -9,6 +9,7 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
     * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
+from urlparse import urlparse
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
@@ -27,134 +28,106 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-import lxml.html
-import lxml.etree
 import hashlib
 
+from lxml import html
 from lxml.html.clean import Cleaner
+from lxml.cssselect import CSSSelector
+
+from urlparse import urlparse
 
 
-class ProcessDOM(object):
+def getStrippedDOM(html):
     """
-    * Get HTML page from the robot, then analyze for clickable elements, 
-    * and fire/trigger specific events on them.
+    + Clean HTML using lxml.html.clean.Cleaner
     """
-    def __init__(self, html, url, browser, tree):
-        self.html = html
-        self.url = url
-        self.tree = self.parse()
-
-    def getStrippedDOM(self):
-        """
-        Clean HTML using lxml.html.clean.Cleaner
-        """
-        cleaner = Cleaner(comments=True, javascript=True,
+    cleaner = Cleaner(comments=True, javascript=True,
         scripts=True, safe_attrs_only=True, page_structure=True,
         style=True)
 
-        return cleaner.clean_html(self.html)
+    return cleaner.clean_html(html)
 
-    def parse(self):
-        """
-        * This will convert the html source into a dom object
-        * Note that browser interaction is always done on the original DOM, not the modified dom.
-        """
-        parser = lxml.etree.HTMLParser()
-        # Convert html source to dom object
-        # Error catching because of badly formatted HTML, although lxml tends to perform very well :)
-        try:
-            tree = lxml.etree.fromstring(self.html.getStrippedDOM(), parser).getroottree() # Returns a XML tree
-            page = tree.getroot()
-            return tree
-        except:
-            print "Error in parsing HTML.."
-            # What to do here?
-        # This will almost certainly not work here
-        # make_links_absolute(url)
+def parse(html):
+    """
+    + This will convert the html source into a dom object
+    + Note that browser interaction is always done on the original DOM, not the modified dom.
+    """
+    # Convert html source to dom object
+    # Error catching because of badly formatted HTML, although lxml tends to perform very well :)
+    try:
+        tree = html.fromstring(html.getStrippedDOM()) # Returns a XML tree
+        return tree
+    except:
+        print "Error in parsing HTML.."
+        # What to do here?
+    # This will almost certainly not work here
+    # make_links_absolute(url)
 
-    def getElementById(self, element, Id):
-        """return the first element with this id attribute.
-        Return None if not available
-        >>> from lxml.etree import tostring,fromstring,Element,SubElement
-        >>> s = '<div><p id="myId">Some text</p></div>'
-        >>> elt = fromstring(s)
-        >>> e = getElementById(elt,'myId')
-        >>> tostring(e)
-        '<p id="myId">Some text</p>'
-        >>> e = getElementById(elt,'anotherId')
-        >>> e is None
-        True
-        """
-        try:
-            return element.xpath("//*[@id='%s']" % (Id,))[0]
-        except IndexError:
-            return None
-
-    def xpath(self, expression):
+def xpath(expression):
         return self.tree.xpath(expression)
   
     def css_select(self, expression, text = False):
-        from lxml.cssselect import CSSSelector
         sel = CSSSelector(expression)
         selected_elements = sel(self.tree)
         if text:
             selected_elements = map(lambda x: x.text, selected_elements)
         return selected_elements
 
-    def hashcode(self):
-        """
-        * Calculates a hash based on html string
-        """
-        string = lxml.html.fromstring(self.html).tostring()
-        return hashlib.md5(string).hexdigest
+def hashcode(html):
+    """
+    + Calculates a hash based on html string
+    """
+    string = html.fromstring(html).tostring()
+    return hashlib.md5(string).hexdigest()
 
-    def levenshtein(string1, string2):
-        """ 
-        * Measures the amount of difference between two strings.
-        * The return value is the number of operations (insert, delete, replace)
-          required to transform string a into string b.
+def levenshtein(string1, string2):
+    """
+    + Measures the amount of difference between two strings.
+    + The return value is the number of operations (insert, delete, replace)
+      required to transform string a into string b.
+    """
+    # http://hetland.org/coding/python/levenshtein.py
+    n, m = len(string1), len(string2)
+    if n > m:
+        # Make sure n <= m to use O(min(n,m)) space.
+        string1, string2, n, m = string2, string1, m, n
+    current = range(n+1)
+    for i in xrange(1, m+1):
+        previous, current = current, [i]+[0]*n
+        for j in xrange(1, n+1):
+            insert, delete, replace = previous[j]+1, current[j-1]+1, previous[j-1]
+            if string1[j-1] != string2[i-1]:
+                replace += 1
+            current[j] = min(insert, delete, replace)
+    return current[n]
 
-        * This will be used to compare DOM states
-        * The edit distance algorithm.
+def minEditDist(dom1, dom2):
+    """
+    + Implements the edit-distance method on DOM for backtracking and DOM diff measure
+    + Computes the min edit distance from target to source
+    + Stolen from http://www.cs.colorado.edu/~martin/csci5832/edit-dist-blurb.html
+    """
+    n = len(dom1)
+    m = len(dom2)
 
-        """
-        # http://hetland.org/coding/python/levenshtein.py
-        n, m = len(string1), len(string2)
-        if n > m: 
-            # Make sure n <= m to use O(min(n,m)) space.
-            string1, string2, n, m = string2, string1, m, n
-        current = range(n+1)
-        for i in xrange(1, m+1):
-            previous, current = current, [i]+[0]*n
-            for j in xrange(1, n+1):
-                insert, delete, replace = previous[j]+1, current[j-1]+1, previous[j-1]
-                if string1[j-1] != string2[i-1]:
-                    replace += 1
-                current[j] = min(insert, delete, replace)
-        return current[n]
+    distance = [[0 for i in range(m+1)] for j in range(n+1)]
 
+    for i in range(1,n+1):
+        distance[i][0] = distance[i-1][0] + insertCost(dom2[i-1])
 
-#*************************************************************************************************
-#thanks to Mark Pilgrim for these lists 
-#http://feedparser.org/docs/html-sanitization.html
+    for j in range(1,m+1):
+        distance[0][j] = distance[0][j-1] + deleteCost(dom1[j-1])
 
-allowed_tags = set(('a', 'abbr', 'acronym', 'address', 'area', 'b', 'big',
-'blockquote', 'br', 'button', 'caption', 'center', 'cite', 'code', 'col',
-'colgroup', 'dd', 'del', 'dfn', 'dir', 'div', 'dl', 'dt', 'em', 'fieldset',
-'font', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img',
-'input', 'ins', 'kbd', 'label', 'legend', 'li', 'map', 'menu', 'ol',
-'optgroup', 'option', 'p', 'pre', 'q', 's', 'samp', 'select', 'small',
-'span', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td',
-'textarea', 'tfoot', 'th', 'thead', 'tr', 'tt', 'u', 'ul', 'var'))
-  
-allowed_attributes = set(('abbr', 'accept', 'accept-charset', 'accesskey',
-'action','align', 'alt', 'axis', 'border', 'cellpadding', 'cellspacing',
-'char','charoff', 'charset', 'checked', 'cite', 'class', 'clear', 'cols',
-'colspan', 'color', 'compact', 'coords', 'datetime', 'dir', 'disabled',
-'enctype', 'for', 'frame', 'headers', 'height', 'href', 'hreflang',
-'hspace', 'id', 'ismap', 'label', 'lang', 'longdesc', 'maxlength',
-'media', 'method', 'multiple', 'name', 'nohref', 'noshade', 'nowrap',
-'prompt', 'readonly', 'rel', 'rev', 'rows', 'rowspan', 'rules',
-'scope', 'selected', 'shape', 'size', 'span', 'src', 'start',
-'summary', 'tabindex', 'target', 'title', 'type', 'usemap', 'valign',
-'value', 'vspace', 'width'))
+    for i in range(1,n+1):
+        for j in range(1,m+1):
+           distance[i][j] = min(distance[i-1][j]+1,
+                                distance[i][j-1]+1,
+                                distance[i-1][j-1]+substCost(dom1[j-1],dom2[i-1]))
+    return distance[n][m]
+
+def diff(dom1, dom2):
+    """
+    + Compares 2 stripped DOMs (based on lxml.html implementation)
+    """
+  return html.diff.htmldiff(dom1, dom2)
+

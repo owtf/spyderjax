@@ -29,22 +29,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 import utils
-import robot
+from robot import Browser
 import controller
 import state
 
-import lxml.html
+from lxml import html
+
+from selenium.webdriver import *
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import *
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class Spider(object):
-	"""
-	* This is the main crawling engine.
-	* It will use the robot (browser) module to do the crawling
-	  and will pass on the DOM tree for analysis.
-	  - utils will take care of that
-	* The state module will provide the necessary functions for
-	  creating state-flow graph.
-	* At last, the site mirroring and sitemap function will take over.
-	"""
+    """
+    + This is the main crawling engine.
+    + It will use the robot (browser) module to do the crawling
+      and will pass on the DOM tree for analysis.
+      - utils will take care of that
+    + The state module will provide the necessary functions for
+      creating state-flow graph.
+    + At last, the site mirroring and sitemap function will take over.
+    """
 
-	def __init__(self, crawlDepth, maxDepth, base_url)
+    def __init__(self, crawlDepth, base_url, browser):
+        """
+        * Initialize Spider instance
+        """
+        self.site = base_url
+        self.depth = crawlDepth
+        self.browser = browser
+
+    def main(self):
+        """
+        * Main crawler which loads the page, and extracts elements using their tag name
+        """
+        self.browser.gotoURL(base_url)
+
