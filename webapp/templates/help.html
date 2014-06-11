@@ -1,0 +1,81 @@
+{% extends base.html %}
+
+{% block title %}Help Links{% end %}
+
+{% block content %}
+<div class="container">
+    <br></br><br></br>
+    <p>Here is a brief understanding of how this tool works:</p>
+
+    <ul>
+        <li>
+            <p>div and span elements in <strong><em>AJAX</em></strong> applications might have clickables attached to them.</p>
+        </li>
+        <li>
+            <p>The URL of the website along with prospective click elements (a set of HTML tags) is input.</p>
+        </li>
+        <li>
+            <p><em>Robot</em> is used to simulate real user clicks on the embedded browser to fire possible events and actions attached to candidate clickables.</p>
+        </li>
+        <li>
+            <p>A <strong><em>state flow graph</em></strong> is then built.</p>
+        </li>
+        <li>
+            <p>The new <strong><em>state flow graph</em></strong> becomes the input for the crawl procedure which is recursively called.</p>
+        </li>
+        <li>
+            <p>The distance between the current <em>DOM</em> and previous <em>DOM</em> is compared.</p>
+        </li>
+        <li>
+            <p>The <strong><em>state flow graph</em></strong> is updated accordingly.</p>
+        </li>
+        <li>
+            <p>The links in the nodes of the graphs are established by replacing the clickable with a hypertext link.</p>
+        </li>
+        <li>
+            <p>HTML String representation of all <em>DOM</em> objects are generated.</p>
+        </li>
+        <li>
+            <p>The original Ajax site is then used as a mirror site to check for vulnerabilities,</p>
+        </li>
+    </ul>
+
+    <hr>
+
+    <p>A <strong>state-flow graph</strong> for an <strong><em>AJAX</em></strong> site A is a 3 tuple &lt; r, V , E &gt; where:</p>
+
+    <ol>
+        <li>
+            <p><strong><em>r</em></strong> is the root node (called <em>Index</em>) representing the initial state after A has been fully loaded into the browser.</p>
+        </li>
+        <li>
+            <p><strong><em>V</em></strong> is a set of vertices representing the states. Each <code>v ∈ V</code> represents a run-time state in A.
+            </p>
+        </li>
+        <li>
+            <p><strong><em>E</em></strong> is a set of edges between vertices. Each <code>( v 1 , v 2 ) ∈ E</code> represents a clickable <strong><em>c</em></strong> connecting two states if and only if state <strong><em>v 2</em></strong> is reached by executing <strong><em>c</em></strong> in state <strong><em>v 1</em></strong> .</p>
+        </li>
+    </ol>
+
+    <p>
+        <br></br>
+        <img src="/static/img/graph.png" height="175" width="578">
+        <br></br>
+        It illustrates how from the start page three different states can be reached. The edges between states are labeled with an identification (either via its ID-attribute or via an <em>XPath</em> expression) of the element to be clicked in order to reach the given state.</p>
+
+    <p>
+        <br></br>
+        <img src="/static/img/working.png" width="600" height="400">
+        <br></br>
+    </p>
+
+    <h3>A working model for <strong>Crawljax</strong> can be shown as,</h3>
+
+    <p>
+        <br></br>
+        <img src="/static/img/run.png" width="600" height="500">
+        <br></br>
+    </p>
+</div>
+
+{% end %}

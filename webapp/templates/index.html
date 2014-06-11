@@ -1,0 +1,13 @@
+{% extends base.html %}
+
+{% block title %}Home Page{% end %}
+
+{% block content %}
+<br></br><br></br>
+<div class="jumbotron">
+    <h1>SpiderAjax webUI Alpha</h1>
+    <p>Normally, crawlers, even as sophisticated as <em>Google search bots</em>, <strong>cannot</strong> crawl and index a dynamic website [lots of AJAX calls, javascript]. This is not feasible, even advised against for <strong>security</strong> reasons [they don&#39;t want to load possible <strong><em>malicious javascript</em></strong> on their servers :P].</p>
+
+    <p>In order to make <strong><em>AJAX testing</em></strong> (crawling) more generalized and accurate, a team of researchers published a <a href="http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2011-033.pdf">paper</a> and published an open-source tool, <a href="https://github.com/crawljax/crawljax">Crawljax</a> based on it.</p>
+</div>
+{% end %}
