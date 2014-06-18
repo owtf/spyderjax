@@ -9,7 +9,6 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
     * Redistributions of source code must retain the above copyright
       notice, this list of conditions and the following disclaimer.
-from urlparse import urlparse
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
@@ -29,12 +28,15 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 import hashlib
+import re
+import sys
 
 from lxml import html
 from lxml.html.clean import Cleaner
 from lxml.cssselect import CSSSelector
 
 from urlparse import urlparse
+from robot import Browser
 
 
 def getStrippedDOM(html):
@@ -130,4 +132,3 @@ def diff(dom1, dom2):
     + Compares 2 stripped DOMs (based on lxml.html implementation)
     """
   return html.diff.htmldiff(dom1, dom2)
-

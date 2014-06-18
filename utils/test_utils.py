@@ -1,4 +1,6 @@
-/***##################### SPYDERJAX configuration #################
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+'''
 owtf is an OWASP+PTES-focused try to unite great tools and facilitate pen testing
 Copyright (c) 2011, Abraham Aranguren <name.surname@gmail.com> Twitter: @7a_ http://7-a.org
 All rights reserved.
@@ -24,22 +26,50 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'''
+from datetime import datetime
+import random
+import string
 
-This is a part of Google Summer of Code 2014 project, OWASP OWTF
-##################################################################*/
-{
-    "type": "local",
-    "browser_instances": 2,  // default value
-    "take_screenshot": "TRUE",
-    "browser": "firefox",
-    "phantomjs_path": "/usr/local/bin/phantomjs",
-    "chromedriver_path": ,  // empty for right now
-    // Default wait timeout settings. Timeout settings are specified in seconds.
-    "timeout": {
-      // Timeout for quick things that would normally not need any sort of interstitial.
-      "brief": 5,
-      // Timeout for something short like a typical ajax response.
-      "short": 10
-      }
-}
+from six import u
 
+def generate_timestamped_string(subject="test", number_of_random_chars=4):
+    """
+    Generate time-stamped string. Format as follows...
+
+    `2013-01-31_14:12:23_SubjectString_a3Zg`
+
+
+    Kwargs:
+        subject (str): String to use as subject.
+        number_of_random_chars (int) : Number of random characters to append.
+
+    + This method is helpful for creating unique names with timestamps in them
+    """
+    random_str = generate_random_string(number_of_random_chars)
+    timestamp = generate_timestamp()
+    return u"{timestamp}_{subject}_{random_str}".format(timestamp=timestamp,
+                                                        subject=subject,
+                                                        random_str=random_str)
+
+def generate_timestamp(date_format="%Y-%m-%d_%H.%M.%S"):
+    """
+    Returns timestamped string. '2012-03-15_14:42:23
+
+    Kwargs:
+        format: A date/time format string.  If not specified, the default will be used.
+
+    """
+    return datetime.now().strftime(date_format)
+
+
+def generate_random_string(number_of_random_chars=8, character_set=string.ascii_letters):
+    """
+    Generate a series of random characters.
+
+    Kwargs:
+        number_of_random_chars (int) : Number of characters long
+        character_set (str): Specify a character set.  Default is ASCII
+    """
+    return u('').join(random.choice(character_set)
+                      for _ in range(number_of_random_chars))
