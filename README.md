@@ -8,7 +8,7 @@ This is a module being developed as a part of **Google Summer of Code 2014** pro
 What is OWTF?
 ---
 
-**OWTF** is a project aligned to standards such as the **OWASP Testing Guide** and the **Penetration Testing Execution Standard (PTES)**. 
+**OWTF** is a project aligned to standards such as the **OWASP Testing Guide** and the **Penetration Testing Execution Standard (PTES)**.
 
 The main focus of **OWASP OWTF** is to automate the manual, uncreative part of *penetration testing*. **OWTF** tries to unite tools and expedite pentesting through *automation*, *efficient reporting*, *efficient human analysis*, a *fast MiTM proxy*, and *multi-processing*.
 
@@ -16,7 +16,7 @@ The main focus of **OWASP OWTF** is to automate the manual, uncreative part of *
 ABOUT
 ---
 
-**Spyderjax** is a minimalistic port of [Crawljax](http://www.github.com/crawljax/crawljax.git). 
+**Spyderjax** is a minimalistic port of [Crawljax](http://www.github.com/crawljax/crawljax.git).
 
 It enables "crawling" of ***AJAX*** targets to probe for further *vulnerability testing*.
 
@@ -64,25 +64,15 @@ An example of a state flow graph:
 The ***state-flow graph*** will be accessed through the **webUI**.
 
 
-5. Mirror site and sitemap generator
----
-
-The ***state flow graph*** can then be passed on to the *mirror site generator* which generates a local **static HMTL mirror** of the **AJAX** target for vulnerability testing by core **OWTF**.
-
-The *sitemap* is also generated here.
-
-
-
 Milestone
 ---
-0.1
+0.11
 
-  - Basic crawler ready
+- [ ] Basic crawler ready
 
-  - Basic DOM analysis
+- [x] Basic DOM analysis
 
-  - Minimal, functional webUI
-
+- [x] Minimal, functional webUI
 
 
 Contribute

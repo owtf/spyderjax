@@ -1,0 +1,11 @@
+{
+  "browser_instances": 2,
+  "take_screenshot": true,
+  "browser": "firefox",
+  "phantomjs_path": "/usr/local/bin/phantomjs",
+  "chromedriver_path": "/home/viyat/workspace/spyderjax/lib/chromedriver",
+  "timeout": {
+    "brief": 5,
+    "short": 10
+    }
+}

@@ -56,6 +56,15 @@ class Config(object):
         return config
 
 
+class Init(object):
+    """
+    Initialises webdriverfactory, loads and reads configuration from file, and creates necessary dirs
+    """
+
+    def __init__(self, config):
+        self.config = Config.read()
+
 if __name__ == "__main__":
     s = Config()
     s.read()
+

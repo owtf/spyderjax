@@ -27,42 +27,26 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
+from datetime import datetime
+import random
+import string
 
-import utils
-from robot import Browser
-import controller
-import state
-
-from lxml import html
-
-from selenium.webdriver import *
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import *
-from selenium.webdriver.support.ui import WebDriverWait
+import os
+import sys
 
 
-class Spider(object):
-    """
-    + This is the main crawling engine.
-    + It will use the robot (browser) module to do the crawling
-      and will pass on the DOM tree for analysis.
-      - utils will take care of that
-    + The state module will provide the necessary functions for
-      creating state-flow graph.
-    + At last, the site mirroring and sitemap function will take over.
-    """
+def ensure_dir(dir_path): 
+    if not os.path.exists(dir_path):
+        print("Creating {0}".format(dir_path))
+        os.makedirs(dir_path)
+    else: 
+        print("{0} already exists".format(dir_path))
 
-    def __init__(self, crawlDepth, base_url, browser):
-        """
-        * Initialize Spider instance
-        """
-        self.site = base_url
-        self.depth = crawlDepth
-        self.browser = browser
-
-    def main(self):
-        """
-        * Main crawler which loads the page, and extracts elements using their tag name
-        """
-        self.browser.gotoURL(base_url)
-
+def create_file(filepath, contents, overwrite=False):
+    if not os.path.exists(filepath) or overwrite:
+        print("Creating {0}".format(filepath))
+        text_file = open(filepath, "w")
+        text_file.write(contents)
+        text_file.close()
+    else:
+        print("{0} already exists.".format(filepath))
