@@ -27,52 +27,35 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
+import sys
+import os
+import logging
+import simplejson as json
+import argparse
 
-import lxml.html
-import math
-import uuid
-import utils
-
-import robot
+#from robot import WebDriverFactory, WebDriverManager
 
 
-class State(object):
+RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
+
+class Config(object):
     """
-    * The state class which represents a state in the browser. When iterating over the possible
-      candidate elements every time a candidate is returned its removed from the list so it is a one
-      time only access to the candidates.
-    * Analogous to StateVertex class in Crawljax
-
-    * url: the current url of the state
-    * name: the name of the state
-    * dom: the current DOM tree of the browser
-
+    Config class provides the following functions:
+      - reads & loads configuration
+      - provides a simple api for webapp
+      - methods for updating config
     """
-    def __init__(self, id, url, dom, name):
-        """
-        Self explanatory
-        """
-        self.id = hashlib.md5(str(uuid.uuid4())).hexdigest()
-        self.url = url
-        self.dom = dom
-        self.name = name
+
+    def __init__(self):
+        self.config_file = os.path.join(RootDir, 'configs', 'config.json')
+
+    def read(self):
+        with open(self.config_file) as data:
+            config = json.load(data)
+            #print config
+        return config
 
 
-<<<<<<< Updated upstream
-class StateFlowGraph(object):
-    """
-    * The State-Flow Graph is a multi-edge directed graph with states on the vertices and
-      clickables (Eventable) on the edges.
-    """
-=======
-    def add_vertex(self, state):
-        # Adds a node for each state
-
-        return graph.add_node()
-
-    def add_edge(self, preFiringDOM, currentDOM):
-        # adds an edge for event
-
-        return graph.add_edge(prefiringDOM, currentDOM)
-
->>>>>>> Stashed changes
+if __name__ == "__main__":
+    s = Config()
+    s.read()
