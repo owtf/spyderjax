@@ -39,15 +39,25 @@ from urlparse import urlparse
 from robot import Browser
 
 
-def getStrippedDOM(html):
-    """
-    + Clean HTML using lxml.html.clean.Cleaner
+def normalize(html):
+    """Normalize the input HTML using lxml.html.clean.Cleaner
     """
     cleaner = Cleaner(comments=True, javascript=True,
         scripts=True, safe_attrs_only=True, page_structure=True,
         style=True)
 
     return cleaner.clean_html(html)
+
+# DOM equivalence algorithm
+def isequivalent(dom1, dom2):
+
+    hash1 = hashcode(normalize(dom1))
+    hash2 = hashcode(normalize(dom2))
+
+    if hash1 == hash2:
+        return True
+    else:
+        return False
 
 def parse(html):
     """
@@ -57,13 +67,10 @@ def parse(html):
     # Convert html source to dom object
     # Error catching because of badly formatted HTML, although lxml tends to perform very well :)
     try:
-        tree = html.fromstring(html.getStrippedDOM()) # Returns a XML tree
+        tree = html.fromstring(normalize(html))
         return tree
     except:
         print "Error in parsing HTML.."
-        # What to do here?
-    # This will almost certainly not work here
-    # make_links_absolute(url)
 
 def xpath(expression):
         return self.tree.xpath(expression)
@@ -75,13 +82,15 @@ def xpath(expression):
             selected_elements = map(lambda x: x.text, selected_elements)
         return selected_elements
 
-def hashcode(html):
+# Computes a hashcode from string to compare if 2 DOMs are equivalent
+def hashcode(string):
     """
     + Calculates a hash based on html string
     """
-    string = html.fromstring(html).tostring()
     return hashlib.md5(string).hexdigest()
 
+# Implemented in crawljax; not too efficient
+# It is too uptight on equivalence - would probably lead to state explosion
 def levenshtein(string1, string2):
     """
     + Measures the amount of difference between two strings.
@@ -127,8 +136,3 @@ def minEditDist(dom1, dom2):
                                 distance[i-1][j-1]+substCost(dom1[j-1],dom2[i-1]))
     return distance[n][m]
 
-def diff(dom1, dom2):
-    """
-    + Compares 2 stripped DOMs (based on lxml.html implementation)
-    """
-  return html.diff.htmldiff(dom1, dom2)
