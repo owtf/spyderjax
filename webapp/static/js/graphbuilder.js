@@ -28,10 +28,10 @@ graphics.node(function(node) {
 	var img = Viva.Graph.svg('image')
 		.attr('width', nodeSize)
 		.attr('height', nodeSize)
-		.link(node.data.img); 
+		.link(node.data.img);
 	$(img).dblclick(function() { window.open(node.data.url, '_blank');});
 	ui.append(svgText);
-	ui.append(img);	
+	ui.append(img);
 	stroke = Viva.Graph.svg('rect')
 		.attr("style", "fill:none;stroke-width:1;stroke:black;")
 		.attr('width', nodeSize+1)
@@ -39,18 +39,18 @@ graphics.node(function(node) {
 		ui.append(stroke);
 	return ui;
 }).placeNode(function(nodeUI, pos) {
-	nodeUI.attr('transform', 
-	'translate(' + 
-	(pos.x - nodeSize/2) + ',' + (pos.y - nodeSize/2) + 
+	nodeUI.attr('transform',
+	'translate(' +
+	(pos.x - nodeSize/2) + ',' + (pos.y - nodeSize/2) +
 	')');
-}); 
+});
 
 
 // To render an arrow we have to address two problems:
-//  1. Links should start/stop at node's bounding box, not at the node center. 
+//  1. Links should start/stop at node's bounding box, not at the node center.
 //  2. Render an arrow shape at the end of the link.
 
-// Rendering arrow shape is achieved by using SVG markers, part of the SVG  
+// Rendering arrow shape is achieved by using SVG markers, part of the SVG
 // standard: http://www.w3.org/TR/SVG/painting.html#Markers
 var createMarker = function(id) {
 	return Viva.Graph.svg('marker')
@@ -71,7 +71,7 @@ marker.append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('stroke', 'grey');
 var defs = graphics.getSvgRoot().append('defs');
 defs.append(marker);
 
-var geom = Viva.Graph.geom(); 
+var geom = Viva.Graph.geom();
 
 graphics.link(function(link){
 	// Notice the Triangle marker-end attribe:
@@ -86,7 +86,7 @@ graphics.link(function(link){
 	});
 	return path;
 }).placeLink(function(linkUI, fromPos, toPos) {
-	// Here we should take care about 
+	// Here we should take care about
 	//  "Links should start/stop at node's bounding box, not at the node center."
 
 	// For rectangular nodes Viva.Graph.geom() provides efficient way to find
@@ -101,7 +101,7 @@ graphics.link(function(link){
 		fromPos.x + fromNodeSize / 2, // right
 		fromPos.y + fromNodeSize / 2, // bottom
 		// segment:
-		fromPos.x, fromPos.y, toPos.x, toPos.y) 
+		fromPos.x, fromPos.y, toPos.x, toPos.y)
 		|| fromPos; // if no intersection found - return center of the node
 
 		var to = geom.intersectRect(
@@ -111,7 +111,7 @@ graphics.link(function(link){
 			toPos.x + toNodeSize / 2, // right
 			toPos.y + toNodeSize / 2, // bottom
 			// segment:
-			toPos.x, toPos.y, fromPos.x, fromPos.y) 
+			toPos.x, toPos.y, fromPos.x, fromPos.y)
 			|| toPos; // if no intersection found - return center of the node
 
 			var data = 'M' + from.x + ',' + from.y +
@@ -119,3 +119,4 @@ graphics.link(function(link){
 
 			linkUI.attr("d", data);
 		});
+

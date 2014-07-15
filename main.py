@@ -33,38 +33,36 @@ import logging
 import simplejson as json
 import argparse
 
-#from robot import WebDriverFactory, WebDriverManager
+from robot import WebDriverFactory, WebDriverManager
 
 
 RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
 
-class Config(object):
+
+class Core(object):
     """
-    Config class provides the following functions:
+    Core class provides the following functions:
       - reads & loads configuration
       - provides a simple api for webapp
       - methods for updating config
+      - manages the app
     """
-
     def __init__(self):
         self.config_file = os.path.join(RootDir, 'configs', 'config.json')
-
-    def read(self):
         with open(self.config_file) as data:
-            config = json.load(data)
-            #print config
-        return config
+            CONFIG = json.load(data)
+        return CONFIG
 
+    def logger(self):
+        """Init loggers, one redirected to a log file, the other to stdout."""
+        # Logger for output in console.
+        log = logging.getLogger('general')
+        infohandler = logging.StreamHandler(result_queue)
+        log.setLevel(logging.INFO)
+        infoformatter = logging.Formatter("%(message)s")
+        infohandler.setFormatter(infoformatter)
+        log.addHandler(infohandler)
 
-class Init(object):
-    """
-    Initialises webdriverfactory, loads and reads configuration from file, and creates necessary dirs
-    """
-
-    def __init__(self, config):
-        self.config = Config.read()
 
 if __name__ == "__main__":
-    s = Config()
-    s.read()
-
+    s = Core()

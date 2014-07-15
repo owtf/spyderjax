@@ -29,41 +29,48 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from lxml import html
-import math
-import uuid
-from copy import deepcopy
 
-from robot import *
-from utils import *
-from graph import *
-
-
-class State(object):
-    """
-    * The state class which represents a state in the browser. When iterating over the possible
-      candidate elements every time a candidate is returned its removed from the list so it is a one
-      time only access to the candidates.
-    * Analogous to StateVertex class in Crawljax
-
-       + url: the current url of the state
-       + name: the name of the state
-       + dom: the current DOM tree of the browser
-    """
-    def __init__(self, browser, name, url, id, candidateElements, failedEvents):
-        """
-        * Describes a state object
-        """
-        self.browser = Browser()
-        self.name = name
-        self.url = Browser().current_url
-        self.id = hashlib.md5(str(uuid.uuid4())).hexdigest()
-        self.candidateElements = []
-        self.failedEvents = failedEvents
+import main
+from embedded_browser import 
+import controller
+from stategraph import StateFlowGraph
+from utils import dom_utils
 
 
 class StateMachine(object):
+    """ The state machine class. """
 
-    def __init__(self, graph, initialState):
-        self.graph = graph
-        self.initial = initialState
+    def __init__(self, Core, embedded_browser):
+        self.Core = Core
+        self.browser = embedded_browser
 
+    def initialState(self):
+        pass
+
+    def currentState(self):
+        return get_state_by_id(index[0])
+
+    def newState(self):
+        dom = self.browser.getDom()
+
+        return stateFlowGraph.new_state(self.browser.get_base_url(),
+                                        dom,
+                                        dom_utils.normalize(dom)
+                                )
+
+    # ChangeS the currentState to the nextState if possible. The next state should already be
+    # present in the graph.
+    def changeState(self):
+        if not nextState:
+            return False
+
+        if StateFlowGraph.can_goto(currentState, nextState):
+            # next state becomes the current state
+            currentState() = nextState();
+            return True
+
+        else:
+            return False
+
+    # Adds the newState and the edge between the currentState and the newState on the SFG.
+    # SFG = stateFlowGraph
