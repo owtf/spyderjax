@@ -124,5 +124,3 @@ class StateFlowGraph(object):
                 state.append(visited)
             else:
                 pass
-
-    def Init()

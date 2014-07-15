@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 '''
 owtf is an OWASP+PTES-focused try to unite great tools and facilitate pen testing
@@ -35,57 +35,49 @@ import re
 import simplejson as json
 from lxml import html
 
-from urllib2 import urlopen
-import urllib2
-
 from selenium.webdriver import *
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import *
 from selenium.webdriver.support.ui import WebDriverWait
 
+from main import Config
+
 
 ## TODO: Possible optimization in form of passing DOM tree to lxml for analysing and parsing
-
 ## Right now, for initial implementation should only include using Selenium to perform DOM tree transversal
-
 #***************************** BUILD your browser here************************************
 class WebDriverFactory(object):
     """
     This takes care of building a browser based on config file
     """
 
-    def __init__(self, config):
-        with open('config.json') as config:
-            data = json.load(config)
-        self.config = data
+    def __init__(self, Config):
+        self.Config = Config
 
-    def create_webdriver(self, driver):
+    def create_webdriver(self):
         """
         create a browser based on WebDriverWait
         """
         # handle each case
-        if driver == "firefox":
+        if self.Core.CONFIG["driver"] == "firefox":
             profile = FirefoxProfile()
             profile.set_preference("network.proxy.type", 1)
             profile.set_preference("network.proxy.http", "127.0.0.1")
             profile.set_preference("network.proxy.http_port", "8008")
-            #use proxy for everything, including localhost
             profile.set_preference("network.proxy.no_proxies_on", "");
             profile.update_preferences()
             browser = Firefox(firefox_profile=profile)
 
             return browser
 
-        elif driver == "chrome":
+        elif self.Core.CONFIG["driver"] == "chrome":
             options = ChromeOptions()
-            # set proxy options
             options.add_arguments("--proxy-server=http://127.0.0.1:8008/")
             browser = Chrome(executable_path=self.config["chromedriver_path"], options)
 
             return browser
 
-        elif driver == "phantomjs":
-            #proxy configuration
+        elif self.Core.CONFIG["driver"] == "phantomjs":
             service_args = (
                             '--proxy=127.0.0.1:8008',\
                             '--proxy-type=http',\
@@ -98,20 +90,17 @@ class WebDriverFactory(object):
 
 class WebDriverManager(object):
 
-    # Config setting to use new webdriver instance per thread.
-    ENABLE_THREADING_SUPPORT = "browser["threaded"]"
-
-    # Config setting to reuse browser instances between WebdriverManager.new_driver() calls.
-    INSTANCES = "browser["instances"]"
-
-
-    def __init__(self, config, webdriver_factory):
-        with open('config.json') as config:
-            data = json.load(config)
-        self.config = data
+    def __init__(self, Core, webdriver_factory):
+        self.Core = Core
         self.__webdriver = {}  # Object with channel as a key
         self.__registered_drivers = {}
         self._webdriver_factory = WebDriverFactory()
+
+    # Config setting to use new webdriver instance per thread.
+    ENABLE_THREADING_SUPPORT = self.Core.CONFIG["browser.threaded"]
+
+    # Config setting to reuse browser instances between WebdriverManager.new_driver() calls.
+    INSTANCES = self.Core.CONFIG["browser.instances"]
 
     def get_driver(self):
         """
@@ -154,20 +143,15 @@ class WebDriverManager(object):
         driver = self.__get_driver_for_channel(channel)
 
       # if self.__config.get(WebDriverManager.REUSE_BROWSER, True):
-            if driver is None:
-                driver = self._webdriver_factory.create_webdriver(# global browser setting)
+        if driver is None:
+            driver = self._webdriver_factory.create_webdriver
 
-                # Register webdriver so it can be retrieved by the manager and
-                # cleaned up after exit.
-                self.__register_driver(channel, driver)
-            else:
-                try:
-                    driver.quit()
-                except:
-                    pass
+            # Register webdriver so it can be retrieved by the manager and
+            # cleaned up after exit.
+            self.__register_driver(channel, driver)
 
-                driver = self._webdriver_factory.create_webdriver(# global browser name)
-                self.__register_driver(channel, driver)
+            driver = self._webdriver_factory.create_webdriver
+            self.__register_driver(channel, driver)
 
         else:
             # Attempt to tear down any existing webdriver.
@@ -177,7 +161,7 @@ class WebDriverManager(object):
                 except:
                     pass
             self.__unregister_driver(channel)
-            driver = self._webdriver_factory.create_webdriver(# global browser)
+            driver = self._webdriver_factory.create_webdriver
             self.__register_driver(channel, driver)
 
         return driver
@@ -235,7 +219,8 @@ class WebDriverAPI(object):
     Provides a necessary higher-abstraction wrapper around selenium WebDriver
     """
 
-    def __init__(self, browser):
+    def __init__(self, Config, browser):
+        self.CONFIG = Config
         self.browser = WebDriverManager.get_driver()
 
     @staticmethod
@@ -296,10 +281,9 @@ class WebDriverAPI(object):
             #navigate().to() and get() are synonyms :)
             self.browser.get(url)
             handlePopUps()
-        except WebDriverException, e:
+        except WebDriverException:
             pass
-        except InterruptedException, e:
-            print "goToUrl got interrupted while waiting for the page to be loaded ", e
+        except InterruptedException:
             pass
 
     def handlePopUps(self):
@@ -309,8 +293,7 @@ class WebDriverAPI(object):
                     + "window.confirm = function(msg){return true;};" \
                     + "window.prompt = function(msg){return true;};" \
                 )
-        except UnexpectedAlertPresentException, e:
-            print "Unexpected Alert element: ", e
+        except UnexpectedAlertPresentException:
             pass
 
     def goback(self):
@@ -347,7 +330,7 @@ class WebDriverAPI(object):
         except Exception, e:
             print "Error: ", e
 
-    def dom(self):
+    def getDOM(self):
         return self.browser.page_source
 
 # Later define it in the user profiles, or take from owtf general.cfg

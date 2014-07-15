@@ -32,48 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 import utils
-
-from robot import *
-from graph import StateFlowGraph as sfg
-from state import StateMachine
-from spider import Spider
-
+import threading
 import logging
 
-## Set up logger ######################
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-# create a file handler
-handler = logging.FileHandler('debug.log')
-handler.setLevel(logging.INFO)
-
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-
-# create a logging format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-ch.setFormatter(formatter)
-
-# add the handlers to the logger
-logger.addHandler(handler)
-logger.addHandler(ch)
-
-#######################################
-
-
-def start(Spider):
-    """
-    Controls the start of the Spider instance
-    """
-
-
-
-def stop():
-
-
-def pause():
-
-def
+from main import Config
