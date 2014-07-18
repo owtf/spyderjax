@@ -33,8 +33,8 @@ import logging
 import simplejson as json
 import argparse
 
-from robot import WebDriverFactory, WebDriverManager
 from config import config
+
 
 RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
 
@@ -49,6 +49,7 @@ class Core(object):
     """
     def __init__(self):
         self.Config = config.get_config() # loads the config at start
+        self.RootDir = RootDir
 
     def logger(self):
         """Init loggers, one redirected to a log file, the other to stdout."""
