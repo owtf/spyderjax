@@ -27,39 +27,11 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-import sys
-import os
-import logging
-import simplejson as json
-import argparse
 
-from robot import WebDriverFactory, WebDriverManager
-from config import config
+def get_config():
+    """ loads the primary config into memory; rightnow the filepath is hardcoded. """
 
-RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
+    with open('config.json') as data:
+            config = json.loads(data)
 
-
-class Core(object):
-    """
-    Core class provides the following functions:
-      - reads & loads configuration
-      - provides a simple api for webapp
-      - methods for updating config
-      - manages the app
-    """
-    def __init__(self):
-        self.Config = config.get_config() # loads the config at start
-
-    def logger(self):
-        """Init loggers, one redirected to a log file, the other to stdout."""
-        # Logger for output in console.
-        log = logging.getLogger('general')
-        infohandler = logging.StreamHandler(result_queue)
-        log.setLevel(logging.INFO)
-        infoformatter = logging.Formatter("%(message)s")
-        infohandler.setFormatter(infoformatter)
-        log.addHandler(infohandler)
-
-
-if __name__ == "__main__":
-    s = Core()
+    return config
