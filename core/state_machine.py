@@ -26,13 +26,25 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-* This module defines a controller which manages the start, pause and stop
-  process of the robot.
 '''
 
-import utils
-import threading
-import logging
+from lxml import html
 
-from main import Config
+import main
+import controller
+from stategraph import StateFlowGraph
+from utils import dom_utils
+
+
+class StateMachine(object):
+    """ The state machine class. """
+
+    def __init__(self, Core, embedded_browser):
+        self.core = Core
+        self.browserpool = {}
+
+    def initial_state(self):
+        pass
+
+    def current_state(self):
+        return StateFlowGraph.get_state_by_id(index[0])
