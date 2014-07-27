@@ -35,13 +35,11 @@ It also performs clicking, firing/triggering of events on certain candidate elem
 
 This uses the HTML source to perform parsing.
 
-  * Compares DOM states before and after an event is triggered by the bot.
+  * Compares DOM trees before and after an event is triggered by the bot.
 
-  * Calculates the difference between two states
+  * Calculates the difference between two states (basically the **edit distance**)
 
-  * Parses the new DOM state for new links, changes
-
-  * (To be added later)
+  * Parses the new DOM tree for state changes
 
 
 3. Controller
@@ -50,6 +48,8 @@ This uses the HTML source to perform parsing.
 This manages the ***clickbot*** and the ***state-flow graph engine***.
 
 It initializes, pauses, and stops the bot. This also creates the ***state flow graph*** based on **DOM state** changes (from the *DOM analyzer*).
+
+This also controls the browser pool (multiple instances of the browser)
 
 
 4. State-flow graph
@@ -73,6 +73,21 @@ Milestone
 - [x] Basic DOM analysis
 
 - [x] Minimal, functional webUI
+
+Roadmap
+---
+
+* Beyond GSoC (0.11)
+
+- [ ] Multiple instances of the browser, and managing the browser pool
+
+- [ ] Multiprocessing/threading* based on future considerations
+
+- [ ] Standalone package
+
+- [ ] REsT API
+
+- [ ] Fully functional web interface
 
 
 Contribute
