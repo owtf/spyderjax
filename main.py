@@ -33,7 +33,8 @@ import logging
 import simplejson as json
 import argparse
 
-from robot import WebDriverFactory, WebDriverManager
+from config import config
+from core.embedded_browser import Browser
 
 
 RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
@@ -41,17 +42,15 @@ RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
 
 class Core(object):
     """
-    Core class provides the following functions:
+    Core provides the following functions:
       - reads & loads configuration
       - provides a simple api for webapp
       - methods for updating config
-      - manages the app
     """
     def __init__(self):
-        self.config_file = os.path.join(RootDir, 'configs', 'config.json')
-        with open(self.config_file) as data:
-            CONFIG = json.load(data)
-        return CONFIG
+        self.Config = config.get_config() # loads the config at start
+        self.RootDir = RootDir
+        self.browser = Browser.create()
 
     def logger(self):
         """Init loggers, one redirected to a log file, the other to stdout."""

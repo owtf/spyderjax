@@ -26,13 +26,12 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-* This module defines a controller which manages the start, pause and stop
-  process of the robot.
 '''
 
-import utils
-import threading
-import logging
+def get_config():
+    """ loads the primary config into memory; rightnow the filepath is hardcoded. """
 
-from main import Config
+    with open('config.json') as data:
+            config = json.loads(data)
+
+    return config

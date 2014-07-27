@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from lxml import html
 
 import main
-from embedded_browser import 
 import controller
 from stategraph import StateFlowGraph
 from utils import dom_utils
@@ -41,36 +40,11 @@ class StateMachine(object):
     """ The state machine class. """
 
     def __init__(self, Core, embedded_browser):
-        self.Core = Core
-        self.browser = embedded_browser
+        self.core = Core
+        self.browserpool = {}
 
-    def initialState(self):
+    def initial_state(self):
         pass
 
-    def currentState(self):
-        return get_state_by_id(index[0])
-
-    def newState(self):
-        dom = self.browser.getDom()
-
-        return stateFlowGraph.new_state(self.browser.get_base_url(),
-                                        dom,
-                                        dom_utils.normalize(dom)
-                                )
-
-    # ChangeS the currentState to the nextState if possible. The next state should already be
-    # present in the graph.
-    def changeState(self):
-        if not nextState:
-            return False
-
-        if StateFlowGraph.can_goto(currentState, nextState):
-            # next state becomes the current state
-            currentState() = nextState();
-            return True
-
-        else:
-            return False
-
-    # Adds the newState and the edge between the currentState and the newState on the SFG.
-    # SFG = stateFlowGraph
+    def current_state(self):
+        return StateFlowGraph.get_state_by_id(index[0])
