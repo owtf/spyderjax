@@ -27,41 +27,15 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-import sys
-import os
-import logging
-import simplejson as json
-import argparse
-
-from config import config
-from core.embedded_browser import Browser
+import uuid
+import arrow
 
 
-RootDir = os.path.dirname(os.path.abspath(sys.argv[0])) or '.'
+class Session(object):
 
-
-class Core(object):
-    """
-    Core provides the following functions:
-      - reads & loads configuration
-      - provides a simple api for webapp
-      - methods for updating config
-    """
-    def __init__(self):
-        self.Config = config.get_config() # loads the config at start
-        self.RootDir = RootDir
-        self.browser = Browser.create()
-
-    def logger(self):
-        """Init loggers, one redirected to a log file, the other to stdout."""
-        # Logger for output in console.
-        log = logging.getLogger('general')
-        infohandler = logging.StreamHandler(result_queue)
-        log.setLevel(logging.INFO)
-        infoformatter = logging.Formatter("%(message)s")
-        infohandler.setFormatter(infoformatter)
-        log.addHandler(infohandler)
-
-
-if __name__ == "__main__":
-    s = Core()
+    def __init__(self, client_address):
+        self.id = uuid.uuid4()
+        self.start_time = arrow.now().timestamp
+        self.client_address = client_address
+        self.end_time = None
+        self.live = True

@@ -68,15 +68,9 @@ class Control(object):
     def get_all(self):
         return self.pool
 
-
+"""
 def run():
-    """Make test run in mutiple browsers
-    """
-
-    class SubTest(unittest.TestCase):
-        def __init__(self, driver=None):
-            self.driver = driver
-            self.driver.implicitly_wait(30)
+    """Make the crawler run in mutiple browser instances. """
 
     def wrapper(*args, **kwargs):
         threads = []
@@ -103,3 +97,4 @@ def run():
 
 
     return wrapper
+"""

@@ -30,23 +30,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import hashlib
 import re
 import sys
-
 from lxml import html
-from lxml.html.clean import Cleaner
-from lxml.cssselect import CSSSelector
 
-from urlparse import urlparse
-from robot import Browser
+from core.lib.readability import cleaners
 
 
 def normalize(html):
-    """Normalize the input HTML using lxml.html.clean.Cleaner
-    """
-    cleaner = Cleaner(comments=True, javascript=True,
-        scripts=True, safe_attrs_only=True, page_structure=True,
-        style=True)
+    """Normalize the input HTML using the execellent readability library. """
 
-    return cleaner.clean_html(html)
+    return str(cleaners.html_cleaner.clean_html(html))
 
 # DOM equivalence algorithm
 def isequivalent(dom1, dom2):
@@ -61,8 +53,8 @@ def isequivalent(dom1, dom2):
 
 def parse(html):
     """
-    + This will convert the html source into a dom object
-    + Note that browser interaction is always done on the original DOM, not the modified dom.
+    # This will convert the html source into a dom object
+    # Note that browser interaction is always done on the original DOM, not the modified dom.
     """
     # Convert html source to dom object
     # Error catching because of badly formatted HTML, although lxml tends to perform very well :)
@@ -73,28 +65,26 @@ def parse(html):
         print "Error in parsing HTML.."
 
 def xpath(expression):
-        return self.tree.xpath(expression)
+    return self.tree.xpath(expression)
   
-    def css_select(self, expression, text = False):
-        sel = CSSSelector(expression)
-        selected_elements = sel(self.tree)
-        if text:
-            selected_elements = map(lambda x: x.text, selected_elements)
-        return selected_elements
+def css_select(self, expression, text = False):
+    sel = CSSSelector(expression)
+    selected_elements = sel(self.tree)
+    if text:
+       selected_elements = map(lambda x: x.text, selected_elements)
+    return selected_elements
 
 # Computes a hashcode from string to compare if 2 DOMs are equivalent
 def hashcode(string):
-    """
-    + Calculates a hash based on html string
-    """
+    """ Calculates a hash based on html string. """
     return hashlib.md5(string).hexdigest()
 
 # Implemented in crawljax; not too efficient
-# It is too uptight on equivalence - would probably lead to state explosion
+# too uptight on equivalence - would probably lead to state explosion
 def levenshtein(string1, string2):
     """
-    + Measures the amount of difference between two strings.
-    + The return value is the number of operations (insert, delete, replace)
+    # Measures the amount of difference between two strings.
+    # The return value is the number of operations (insert, delete, replace)
       required to transform string a into string b.
     """
     # http://hetland.org/coding/python/levenshtein.py
@@ -114,9 +104,9 @@ def levenshtein(string1, string2):
 
 def minEditDist(dom1, dom2):
     """
-    + Implements the edit-distance method on DOM for backtracking and DOM diff measure
-    + Computes the min edit distance from target to source
-    + Stolen from http://www.cs.colorado.edu/~martin/csci5832/edit-dist-blurb.html
+    # Implements the edit-distance method on DOM for backtracking and DOM diff measure
+    # Computes the min edit distance from target to source
+    # Stolen from http://www.cs.colorado.edu/~martin/csci5832/edit-dist-blurb.html
     """
     n = len(dom1)
     m = len(dom2)

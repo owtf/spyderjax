@@ -72,23 +72,22 @@ class Browser(object):
             options = ChromeOptions()
             options.add_arguments("--proxy-server=http://127.0.0.1:8008/")
             browser = splinter.Browser('chrome',
-                                        executable_path=self.core.Config["chromedriver_path"],
-                                        options
-                                    )
+                                        executable_path=self.core.Config["chromedriver_path"]
+                                      )
 
             return browser
 
         elif self.core.Config["driver"] == "phantomjs":
             service_args = (
                             '--proxy=127.0.0.1:8008',
-                            '--proxy-type=http',
+                            '--proxy-type=https',
                             '--ignore-ssl-errors=true'
-                        )
+                           )
 
             browser = splinter.Browser('phantomjs',
                                         self.core.Config["phantomjs_path"],
                                         service_args=service_args
-                                    )
+                                      )
 
             return browser
 
@@ -102,7 +101,7 @@ class Browser(object):
                                   timeout,
                                   poll_frequency=poll_frequency,
                                   ignored_exceptions=ignored_exceptions
-                            ).until(lambda browser: condition())
+                                 ).until(lambda browser: condition())
 
     # Later define it in the user profiles, or take from owtf general.cfg
     DEFAULT_ELEMENTS = ["a", "button", "li", "nav", "ol", "span", "ul", "header", "footer", "section"]
