@@ -1,7 +1,7 @@
 Spyderjax
 ---
 
-This is a module being developed as a part of **Google Summer of Code 2014** project for **OWASP OWTF**.
+This was a prototype developed as a part of **Google Summer of Code 2014** project for **OWASP OWTF**.
 
 
 About
